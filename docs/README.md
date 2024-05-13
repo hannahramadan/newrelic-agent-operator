@@ -66,6 +66,8 @@ spec:
     image: ghcr.io/newrelic-experimental/newrelic-agent-operator/instrumentation-dotnet:10.23.0
   php:
     image: ghcr.io/newrelic-experimental/newrelic-agent-operator/instrumentation-php:10.19.0.9
+  ruby:
+    image: ghcr.io/newrelic-experimental/newrelic-agent-operator/instrumentation-ruby:9.10.0
   # go:
   #   image: ghcr.io/open-telemetry/opentelemetry-go-instrumentation/autoinstrumentation-go:latest
 EOF
@@ -93,6 +95,7 @@ instrumentation.newrelic.com/inject-nodejs: "true"
 instrumentation.newrelic.com/inject-python: "true"
 instrumentation.newrelic.com/inject-dotnet: "true"
 instrumentation.newrelic.com/inject-php: "true"
+instrumentation.newrelic.com/inject-ruby: "true"
 instrumentation.newrelic.com/inject-go: "true"
 ```
 

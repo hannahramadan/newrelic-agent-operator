@@ -1,0 +1,35 @@
+# TODO: Add Ruby app image & deployment file
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: # Ruby app name ie sinatra-hello-world
+spec:
+  selector:
+    matchLabels:
+      app: # sinatra-hello-world
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: # sinatra-hello-world
+      annotations:
+        instrumentation.newrelic.com/inject-python: "true"
+    spec:
+      containers:
+        - name: # sinatra-hello-world
+          image: # image name
+          ports:
+            - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: # sinatra-hello-world-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 5000
+  selector:
+    app: # sinatra-hello-world
