@@ -23,13 +23,9 @@ import (
 	"github.com/newrelic-experimental/newrelic-agent-operator/api/v1alpha1"
 )
 
-/*
-TODO: Ruby paths
-*/
 const (
-	envRubyLoadPath           = "LOAD_PATH"
-	pythonPathPrefix        = "/newrelic-instrumentation/newrelic/bootstrap"
-	pythonPathSuffix        = "/newrelic-instrumentation"
+	envRubyOpt            = "RUBYOPT"
+	rubyOptRequire        = "-r /newrelic-instrumentation/lib/bootstrap"
 	rubyVolumeName        = volumeName + "-ruby"
 	rubyInitContainerName = initContainerName + "-ruby"
 )
@@ -38,7 +34,7 @@ func injectRubySDK(rubySpec v1alpha1.Ruby, pod corev1.Pod, index int) (corev1.Po
 	// caller checks if there is at least one container.
 	container := &pod.Spec.Containers[index]
 
-	err := validateContainerEnv(container.Env, envRubyLoadPath)
+	err := validateContainerEnv(container.Env, envRubyOpt)
 	if err != nil {
 		return pod, err
 	}
@@ -51,17 +47,14 @@ func injectRubySDK(rubySpec v1alpha1.Ruby, pod corev1.Pod, index int) (corev1.Po
 		}
 	}
 
-	/*
-	TODO: Ruby paths
-	*/
-	idx := getIndexOfEnv(container.Env, envPythonPath)
+	idx := getIndexOfEnv(container.Env, envRubyOpt)
 	if idx == -1 {
 		container.Env = append(container.Env, corev1.EnvVar{
-			Name:  envPythonPath,
-			Value: fmt.Sprintf("%s:%s", pythonPathPrefix, pythonPathSuffix),
+			Name:  envRubyOpt,
+			Value: rubyOptRequire,
 		})
 	} else if idx > -1 {
-		container.Env[idx].Value = fmt.Sprintf("%s:%s:%s", pythonPathPrefix, container.Env[idx].Value, pythonPathSuffix)
+		container.Env[idx].Value = container.Env[idx].Value + envRubyOpt
 	}
 
 	container.VolumeMounts = append(container.VolumeMounts, corev1.VolumeMount{
